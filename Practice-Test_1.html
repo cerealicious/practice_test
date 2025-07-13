@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="cerealicious">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MST200 Practice Test - File Permissions, DHCP, DNS </title>
+    <style>
+        /* Basic styling for the body */
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter font for a modern look */
+            margin: 20px;
+            background-color: #f4f7f6; /* Light background for a clean feel */
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Styling for the main quiz container */
+        #quiz-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 25px;
+            background-color: #ffffff;
+            border-radius: 12px; /* Rounded corners for the container */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+            display: none; /* Initially hidden */
+        }
+
+        /* Styling for individual questions */
+        .question {
+            margin-bottom: 25px;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 10px; /* Rounded corners for questions */
+            background-color: #fefefe;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth hover effect */
+        }
+
+        .question:hover {
+            transform: translateY(-3px); /* Slightly lift on hover */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+        }
+
+        /* Styles for questions with images */
+        .question-with-image {
+            display: flex;
+            flex-wrap: wrap; /* Allows items to wrap to the next line on smaller screens */
+            align-items: flex-start; /* Aligns items to the top */
+            gap: 25px; /* Space between the text content and the image */
+        }
+
+        .question-content {
+            flex: 1; /* Allows the content to take up available space */
+            min-width: 300px; /* Ensures content doesn't get too narrow */
+        }
+
+        .question-media {
+            flex-shrink: 0; /* Prevents the image container from shrinking */
+            max-width: 45%; /* Limits the image container width */
+            border-radius: 8px;
+            overflow: hidden; /* Ensures image corners are rounded */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .question-with-image {
+                flex-direction: column; /* Stacks items vertically on small screens */
+            }
+            .question-media {
+                max-width: 100%; /* Image takes full width on small screens */
+            }
+        }
+
+        /* Styling for options */
+        .options label {
+            display: block;
+            margin-bottom: 10px;
+            padding: 12px 15px;
+            background-color: #f0f5f8;
+            border: 1px solid #d3e0ea;
+            border-radius: 8px; /* Rounded corners for options */
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+
+        .options label:hover {
+            background-color: #e2eaf0;
+            border-color: #a7c0d8;
+        }
+
+        .options input[type="radio"] {
+            margin-right: 10px;
+            accent-color: #007bff; /* Highlight radio button with a blue color */
+        }
+
+        /* Feedback messages */
+        .feedback {
+            margin-top: 15px;
+            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        .correct {
+            color: #1a7a1a; /* Darker green for correct answers */
+            background-color: #e6ffe6; /* Light green background */
+            border: 1px solid #66cc66;
+        }
+
+        .incorrect {
+            color: #cc3300; /* Darker red for incorrect answers */
+            background-color: #ffe6e6; /* Light red background */
+            border: 1px solid #ff6666;
+        }
+
+        /* Explanation section */
+        .explanation {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #e9f0f5; /* Light blue-grey background */
+            border-left: 5px solid #007bff; /* Blue border on the left */
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        .explanation i {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            display: block; /* Removes extra space below the image */
+            border-radius: 8px; /* Rounded corners for images */
+            object-fit: contain; /* Ensures the entire image is visible */
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 600;
+        }
+
+        /* Disclaimer Page Styling */
+        #disclaimer-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh; /* Occupy most of the viewport height */
+            text-align: center;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            margin: 50px auto;
+        }
+
+        #disclaimer-page h2 {
+            color: #007bff;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        #disclaimer-page p {
+            font-size: 0.9em;
+            margin-bottom: 25px;
+            color: #555;
+        }
+
+        #accept-button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+        }
+
+        #accept-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+    </style>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="disclaimer-page">
+        <h2>Important Disclaimer</h2>
+        <p>This practice test is an independent study aid for MST200, designed for <b>personal practice and self-assessment only</b>. While some questions may align with concepts from previous course materials or publicly available past tests, it is <b>NOT</b> an official exam or a tool for academic dishonesty.</p>
+        <p>Please note there may be <b>unintentional errors in the questions or explanations</b>. Always cross-reference with our official course materials.</p>
+        <p>By clicking "Accept," you agree to use this resource responsibly and ethically. <b>I am not liable nor can I be held responsible for any academic penalties or consequences resulting from the misuse of this material or from any errors within it</b>.</p>
+        <p>Always adhere to Seneca's institution and instructor's policies regarding academic honesty.</p>
+
+
+        <button id="accept-button">Accept and Start Quiz</button>
+    </div>
+
+    <h1 style="display: none;" id="quiz-title">MST200 Practice Test - File Permissions, DHCP, and DNS (New Questions)</h1>
+    <div id="quiz-container"></div>
+
+    <script>
+        const originalQuestions = [
+            // --- New Multiple Choice Questions (15 questions) ---
+            {
+                question: "What is the main disadvantage of compressing files on an NTFS volume?",
+                options: ["Increased disk space usage", "Reduced data security", "Increased CPU overhead to open/copy files", "Incompatibility with other file systems."],
+                answer: "Increased CPU overhead to open/copy files",
+                explanation: "The main disadvantage of compressing files on an NTFS volume is the increased CPU overhead required to open and copy these files, as the system needs to decompress them on the fly.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 9: 'Compress Attribute: Reduce the amount of disk space used for files. Disadvantage of compressed files is increased CPU overhead to open the files and to copy them'</i>"
+            },
+            {
+                question: "What is the purpose of the 'Internet Printing' role service in Windows Server's Print and Document Services?",
+                options: ["To allow UNIX clients to send print jobs", "To centralize print server management", "To create web pages for print clients using IIS", "To send scanned images to users."],
+                answer: "To create web pages for print clients using IIS",
+                explanation: "The 'Internet Printing' role service enables the creation of web pages that provide print clients access to printers through an IIS (Internet Information Services) web server, utilizing the Internet Printing Protocol (IPP).<br><i>Reference: Week6-PrintingServices.pdf, Page 12: 'Internet Printing - creates a web pages and gives access to print clients through an IIS web server Internet. It uses Printing Protocol (IPP)'</i>"
+            },
+            {
+                question: "Which component of the Windows Print Architecture is responsible for managing sending jobs to the print device by slowly feeding stored print images?",
+                options: ["Print Device", "Print Client", "Print Queue", "Spooler."],
+                answer: "Spooler",
+                explanation: "The Spooler is the software component that manages the process of sending print jobs to the print device, slowly feeding stored print images while other jobs wait in the queue.<br><i>Reference: Week6-PrintingServices.pdf, Page 5: 'Spooler - software that manages sending jobs to the print device by slowly feeding stored print images, while other stored print jobs wait in the queue'</i>"
+            },
+            {
+                question: "What happens if a DHCP client cannot get an IP address from the DHCP server?",
+                options: ["It will use a static IP address", "It will get an APIPA address", "It will shut down its network adapter", "It will try to obtain an IP from DNS."],
+                answer: "It will get an APIPA address",
+                explanation: "If a DHCP client fails to obtain an IP address from a DHCP server, it will typically self-assign an Automatic Private IP Addressing (APIPA) address, which is in the 169.254.0.0/16 range.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 20: 'Troubleshooting DHCP: Common problems: 2. Unable to get an address from the DHCP Server (gets APIPA address)'</i>"
+            },
+            {
+                question: "What is the purpose of authorizing a DHCP server in a domain?",
+                options: ["To enable DHCP failover", "To create DHCP security groups", "To ensure the DHCP server belongs on the network", "To configure DHCP options."],
+                answer: "To ensure the DHCP server belongs on the network",
+                explanation: "Authorizing a DHCP server in a domain is a security measure that ensures only legitimate DHCP servers are providing IP addresses on the network, preventing rogue servers from causing issues.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 8: 'Installing a DHCP Server: • Authorize the DHCP Server if it is on a domain: Ensures this DHCP server belongs on the network'</i>"
+            },
+            {
+                question: "Which DNS resource record identifies a DNS server functioning as an authority for the zone?",
+                options: ["SOA", "A", "NS", "CNAME."],
+                answer: "NS",
+                explanation: "The NS (Name Server) resource record identifies a DNS server that is authoritative for a particular zone, meaning it holds the complete and accurate information for that zone.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 29: 'NS (Name Server) • Identifies a DNS server functioning as an authority for the zone.'</i>"
+            },
+            {
+                question: "What happens to permissions when a file is moved from an NTFS partition to a non-NTFS partition?",
+                options: ["Permissions are retained", "Permissions are converted to FAT32 permissions", "Permissions are lost", "The user is prompted to convert the partition."],
+                answer: "Permissions are lost",
+                explanation: "When a file is moved from an NTFS partition to a non-NTFS partition (like FAT32 or exFAT), the NTFS permissions are lost because the destination file system does not support them.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 22: 'Moving Files and Folders examples: Non-NTFS Partition: Lose NTFS Permissions'</i>"
+            },
+            {
+                question: "What is the main advantage of using a Print Server for network-attached printers?",
+                options: ["Users only see their own print jobs", "All print job processing is completed by the client", "Administrators can centrally manage the print queue", "Error messages are directed only to the client."],
+                answer: "Administrators can centrally manage the print queue",
+                explanation: "A key advantage of using a Print Server for network-attached printers is that it allows administrators to centrally manage the print queue, monitor print jobs, and control printer access and priorities.<br><i>Reference: Week6-PrintingServices.pdf, Page 10: 'Network-attached Printer Sharing: • Print Server manages the Printer and all clients print through the Print Server' (implies centralized management) and Page 9, 'Network-attached Printing: • Administrators cannot centrally manage the print queue' (without a print server)</i>"
+            },
+            {
+                question: "Which attribute is used to control the visibility of files, often system files?",
+                options: ["Read-only", "Hidden", "Archive", "Encrypt."],
+                answer: "Hidden",
+                explanation: "The Hidden attribute is used to control the visibility of files and folders. It is commonly applied to system files to prevent accidental modification or deletion by users.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 9: 'Hidden Attribute: Controls visibility of files (often system files)'</i>"
+            },
+            {
+                question: "What is the primary function of a DNS server?",
+                options: ["To assign IP addresses to clients", "To manage print jobs", "To resolve domain and computer names to IP addresses", "To encrypt file data."],
+                answer: "To resolve domain and computer names to IP addresses",
+                explanation: "The primary function of a DNS server is to translate human-readable domain and computer names into numerical IP addresses, and vice-versa, enabling communication across networks.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 22: 'Domain Name System (DNS) • Enables a DNS server to resolve domain and computer names to IP addresses'</i>"
+            },
+            {
+                question: "What is the default behavior of routers regarding DHCP Discover packets?",
+                options: ["They forward them to all subnets", "They forward them only to the DHCP server", "They do not forward broadcasts", "They convert them to unicast."],
+                answer: "They do not forward broadcasts",
+                explanation: "By default, routers do not forward broadcast messages, including DHCP Discover packets. This is why DHCP Relay Agents are often needed in multi-subnet environments.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 19: 'DHCP on Multiple Subnets: DHCP Discover packets are broadcasted and are not forwarded to other subnets. By default, routers do not forward broadcasts...'</i>"
+            },
+            {
+                question: "Which tab in Printer Properties allows you to configure when the printer is available and its priority?",
+                options: ["General", "Sharing", "Ports", "Advanced."],
+                answer: "Advanced",
+                explanation: "The 'Advanced' tab in Printer Properties provides options to configure various advanced settings, including printer availability schedules and priority levels for print jobs.<br><i>Reference: Week6-PrintingServices.pdf, Page 21: 'Printer Properties - Advanced Tab: Configure when the printer is available • Configure printer priority'</i>"
+            },
+            {
+                question: "What is an Access Control List (ACL)?",
+                options: ["A list of user accounts", "A list of network devices", "A list of privileges to access and manipulate resource objects", "A list of installed software."],
+                answer: "A list of privileges to access and manipulate resource objects",
+                explanation: "An Access Control List (ACL) is a list of Access Control Entries (ACEs) that define the privileges granted or denied to users or groups for accessing and manipulating specific resource objects, such as files, folders, or printers.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 12: 'Permissions: • Privileges to access and manipulate resource objects, such as files, folders and printers; for example, can a user READ, WRITE, DELETE, CREATE etc.' and Page 38: 'Access token is compared to the Access Control List (ACL) of the secured object'</i>"
+            },
+            {
+                question: "Which command-line tool can be used to help diagnose DHCP problems on a client computer?",
+                options: ["ping", "tracert", "ipconfig", "netstat."],
+                answer: "ipconfig",
+                explanation: "The `ipconfig` command-line tool is essential for diagnosing TCP/IP and DHCP-related issues on a client computer, as it displays current IP configuration, including whether an IP was obtained from DHCP.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 20: 'Troubleshooting DHCP: • Use ipconfig to help diagnose problems'</i>"
+            },
+            {
+                question: "What is the main difference between Microsoft 365 and Office 365?",
+                options: ["Microsoft 365 is only for personal use", "Office 365 includes Windows 10 and EMS", "Microsoft 365 includes Windows 10 and EMS", "Office 365 is a standalone OS."],
+                answer: "Microsoft 365 includes Windows 10 and EMS",
+                explanation: "Microsoft 365 is a more comprehensive offering that bundles Office 365 applications with Windows 10 (the operating system) and the Enterprise Mobility Suite (EMS) for security and management.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 42: 'Microsoft 365 is Office 365 with Windows 10 (OS) and the Enterprise Mobility Suite (Suite of Security and Management apps)'</i>"
+            },
+
+            // --- New True/False Questions (15 questions) ---
+            {
+                question: "The Encrypting File System (EFS) can only be manually configured on a per-volume basis.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "The Encrypting File System (EFS) is designed to be configured manually on a per-file or per-folder basis, not on an entire volume. BitLocker is used for full-volume encryption.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 10: 'Microsoft Encrypting File System (EFS): • Manually configured on a per file or per folder basis'</i>"
+            },
+            {
+                question: "When a user connects to a secured resource, their Access Token is compared to the Access Control List (ACL) of the secured object.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "During the authentication process, when a user attempts to access a secured resource, their Access Token (containing their security identifier and group memberships) is indeed compared against the Access Control List (ACL) of that resource to determine access.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 38: 'When are permissions evaluated?: • When a user connects to a secured resource, their Access token is compared to the Access Control List (ACL) of the secured object'</i>"
+            },
+            {
+                question: "Disk quotas can be set on any local or shared volume, not just NTFS volumes.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "Disk quotas, which limit disk usage for users, are a feature specifically available on NTFS volumes. They cannot be set on volumes formatted with FAT32 or exFAT.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 26: 'Setting Quotas: Place limitations of disk usage on the users on NTFS volumes:'</i>"
+            },
+            {
+                question: "The Print and Document Services role in Windows Server includes a 'Distributed Scan Server' role service.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "Among the four role services available under Print and Document Services, the 'Distributed Scan Server' allows for sending scanned images to users or groups.<br><i>Reference: Week6-PrintingServices.pdf, Page 12: '4 Role Services available to install: • Distributed Scan Server - allows you to send scanned images to users or groups'</i>"
+            },
+            {
+                question: "In a Network-attached Printing configuration without a print server, administrators can centrally manage the print queue.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "Without a dedicated print server, network-attached printers do not offer centralized management of the print queue. Each client manages its own print jobs, and administrators lack a central point of control.<br><i>Reference: Week6-PrintingServices.pdf, Page 9: 'Network-attached Printing: Without a print server... • Administrators cannot centrally manage the print queue'</i>"
+            },
+            {
+                question: "Printer permissions are handled in a similar way to shared folder permissions.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "Printer permissions, like shared folder permissions, control access to the resource (the printer) and its associated jobs. The security tab for printers functions similarly to that for shared folders.<br><i>Reference: Week6-PrintingServices.pdf, Page 23: 'Printer Properties - Security Tab: Permissions are handled in a similar way to shared folder permissions, but they are specifically for printing and printers.'</i>"
+            },
+            {
+                question: "DHCP Failover can be used for both redundancy and load balancing.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "DHCP Failover is a feature that provides high availability and load balancing for DHCP services. It ensures that IP address assignment continues even if one DHCP server becomes unavailable and can distribute the workload.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 18: 'DHCP Failover: Provides redundancy in case one DHCP server becomes unavailable • Can also be used for load balancing'</i>"
+            },
+            {
+                question: "DHCP Discover packets are unicast and are forwarded by default to other subnets by routers.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "DHCP Discover packets are broadcast messages, not unicast. By default, routers do not forward broadcast traffic to other subnets, which is why DHCP Relay Agents are necessary for DHCP to function across different subnets.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 19: 'DHCP Discover packets are broadcasted and are not forwarded to other subnets. By default, routers do not forward broadcasts...'</i>"
+            },
+            {
+                question: "Reloading the DNS server database can resolve errors related to DNS response to clients after an update.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "If DNS response errors occur after a server update, reloading the DNS server database is a common troubleshooting step that can refresh the server's records and resolve inconsistencies.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 32: 'Troubleshooting DNS: You have installed an update to the DNS server, but DNS response to clients is experiencing errors. Solutions: Reload the DNS server database...'</i>"
+            },
+            {
+                question: "The SOA (Start of Authority) DNS record identifies a DNS server functioning as an authority for the zone.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "The SOA (Start of Authority) record indicates that the server is the *best authoritative source* for data concerning the zone, but the NS (Name Server) record is what *identifies* a DNS server as functioning as an authority for the zone.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 29: 'SOA (Start of Authority): Indicates that the server is the best authoritative source for data concerning the zone.' and 'NS (Name Server): Identifies a DNS server functioning as an authority for the zone.'</i>"
+            },
+            {
+                question: "It is a common practice to leave Share Permissions open (Everyone: Full Control) and restrict permissions with NTFS Permissions.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "This is a widely accepted best practice. By granting broad Share permissions, you ensure network accessibility, and then you use the more granular NTFS permissions to enforce precise security controls.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 34: 'Combining Shared Folder Permissions and NTFS Permissions: • A common practice is to leave Share Permissions open (Everyone: Full Control), and restrict permissions with NTFS Permissions'</i>"
+            },
+            {
+                question: "Files that are owned go toward disk quota calculations.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "When disk quotas are implemented on an NTFS volume, the space consumed by files owned by a user is counted towards that user's quota limit.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 24: 'File and Folder Ownership: • Files that are owned go toward disk quota calculations'</i>"
+            },
+            {
+                question: "Auditing folder and file access can be used for intrusion detection and forensic analysis.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "Auditing provides a trail of user activity and access attempts, which is invaluable for detecting unauthorized intrusions and for performing forensic analysis after a security incident.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 27: 'Auditing is used for: • Intrusion detection • Forensic analysis'</i>"
+            },
+            {
+                question: "To publish a shared folder in Active Directory, you must first take ownership of the folder.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "Publishing a shared folder in Active Directory makes it discoverable to users through AD. While ownership is important for managing permissions, it is not a prerequisite for the act of publishing the share.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 37: 'Publishing a Shared Folder in Active Directory: • Publish a Shared Folder to make an existing shared folder available for users to access when they view Active Directory contents' (Ownership is not listed as a prerequisite for publishing.)</i>"
+            },
+            {
+                question: "Universal Print requires on-premises print servers for compatible printers.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "Universal Print is designed to eliminate the need for on-premises print servers, especially when used with Universal Print-compatible printers, as it runs entirely in the Microsoft Azure cloud.<br><i>Reference: Week6-PrintingServices.pdf, Page 30: 'Universal Print... When it's deployed with Universal Print-compatible printers, it doesn't require any on-premises infrastructure.'</i>"
+            },
+            // --- New Image-based Questions (3 questions) ---
+            {
+                question: "Refer to the diagram and answer the question using the following information:<br>1. The DATA folder has been shared so that EVERYONE has Full Control.<br>2. The Sales Group has Read & Execute NTFS permissions on the Sales_Files Folder.<br>3. The Managers Group has Full Control on the Management folder.<br>4. Mary has been denied Read NTFS permission on Doc1.txt.<br>5. Bob has been given Write NTFS permission on Doc3.txt.<br>6. Xu has Read NTFS permission on Doc2.txt.<br><br><b>Question: What is Mary's effective permission to Doc1.txt?</b>",
+                image: "Diagram1.jpg", // Diagram1.jpg
+                options: ["Read & Execute", "No Access", "Full Control", "Write"],
+                answer: "No Access",
+                explanation: "Mary is a member of the Sales Group, which has Read & Execute on Sales_Files (where Doc1.txt is located). However, Mary has been explicitly denied Read on Doc1.txt. An explicit Deny overrides all other Allow permissions, resulting in no access.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 14: 'NTFS Permissions Rules: • Deny Overrides Other Permissions'</i>"
+            },
+            {
+                question: "Refer to the diagram and answer the question using the following information:<br>1. The DATA folder has been shared so that EVERYONE has Full Control.<br>2. The Sales Group has Read & Execute NTFS permissions on the Sales_Files Folder.<br>3. The Managers Group has Full Control on the Management folder.<br>4. Mary has been denied Read NTFS permission on Doc1.txt.<br>5. Bob has been given Write NTFS permission on Doc3.txt.<br>6. Xu has Read NTFS permission on Doc2.txt.<br><br><b>Question: What is Bob's effective permission to Doc3.txt?</b>",
+                image: "Diagram1.jpg", // Diagram1.jpg
+                options: ["Read & Execute", "Write", "Full Control", "No Access"],
+                answer: "Write",
+                explanation: "Bob is a member of the Sales Group, which has Read & Execute on Sales_Files. Additionally, Bob has been explicitly given Write permission on Doc3.txt. Since NTFS permissions are cumulative (unless denied), Bob gets both Read & Execute from the group and Write directly on the file. The most permissive combination applies for Allow permissions, so Bob has Write access.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 14: 'NTFS Permissions Rules: • NTFS Permissions Are Cumulative' and Page 15: 'NTFS Permissions for Folders and Files: Write: Can create files, write data to files, append data to files...'</i>"
+            },
+            {
+                question: "Refer to the diagram and answer the question using the following information:<br>1. The DATA folder has been shared so that EVERYONE has Full Control.<br>2. The Manufacturing Group has Modify NTFS permissions on the Manufacturing_Files folder.<br>3. The Engineering Group has Read & Write NTFS permissions on the Engineering_Files folder.<br>4. Doc1.txt (in Engineering_Files) has Engineering Group - Read only.<br>5. Doc2.txt (in Manufacturing_Files) has Sue - Deny Write.<br>6. Doc3.txt (in Engineering_Files) has Manufacturing Group - Read & Execute.<br><br><b>Question: What is Sue's effective permission to Doc2.txt?</b>",
+                image: "Diagram2.jpg", // Diagram2.jpg
+                options: ["Modify", "Read & Write", "Read", "No Access"],
+                answer: "Read",
+                explanation: "Sue is a member of the Manufacturing Group, which has Modify permissions on Manufacturing_Files (where Doc2.txt is located). However, Sue has been explicitly denied Write access to Doc2.txt. Since an explicit Deny overrides Allow, Sue loses Write but retains Read access from the inherited Modify permission.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 14: 'NTFS Permissions Rules: • Deny Overrides Other Permissions' and Page 15: 'NTFS Permissions for Folders and Files: Modify: Can read, add, delete, execute, and modify files; cannot delete subfolders and their file contents, change permissions, or take ownership'</i>"
+            }
+        ];
+
+        // Function to shuffle an array (Fisher-Yates algorithm)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+            return array;
+        }
+
+        // Initialize quiz
+        function initializeQuiz() {
+            // Divide questions into groups
+            const multipleChoiceQuestions = originalQuestions.filter(q => q.options.length > 2);
+            const trueFalseQuestions = originalQuestions.filter(q => q.options.length === 2 && (q.options.includes("True") && q.options.includes("False")));
+            const imageQuestions = originalQuestions.filter(q => q.image);
+
+            // Shuffle each group independently
+            const shuffledMultipleChoice = shuffleArray(multipleChoiceQuestions);
+            const shuffledTrueFalse = shuffleArray(trueFalseQuestions);
+            const shuffledImageQuestions = shuffleArray(imageQuestions);
+
+            // Concatenate the shuffled groups in the desired order
+            const questions = [...shuffledMultipleChoice, ...shuffledTrueFalse, ...shuffledImageQuestions];
+
+            // Shuffle options for each question, but skip for True/False questions
+            questions.forEach(q => {
+                // Check if the options array contains only "True" and "False"
+                const isTrueFalseQuestion = q.options.length === 2 &&
+                                            ((q.options[0] === "True" && q.options[1] === "False") ||
+                                             (q.options[0] === "False" && q.options[1] === "True"));
+
+                if (!isTrueFalseQuestion) {
+                    q.options = shuffleArray(q.options);
+                }
+            });
+
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = ''; // Clear previous questions if any
+
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+
+                if (q.image) {
+                    questionDiv.classList.add('question-with-image');
+
+                    const questionContentDiv = document.createElement('div');
+                    questionContentDiv.classList.add('question-content');
+
+                    questionContentDiv.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
+
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.classList.add('options');
+
+                    q.options.forEach(option => {
+                        const label = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `question${index}`;
+                        radio.value = option;
+                        radio.addEventListener('change', () => checkAnswer(index, option));
+                        label.appendChild(radio);
+                        label.appendChild(document.createTextNode(option));
+                        optionsDiv.appendChild(label);
+                    });
+
+                    questionContentDiv.appendChild(optionsDiv);
+
+                    const feedbackDiv = document.createElement('div');
+                    feedbackDiv.classList.add('feedback');
+                    feedbackDiv.id = `feedback-${index}`;
+                    questionContentDiv.appendChild(feedbackDiv);
+
+                    const explanationDiv = document.createElement('div');
+                    explanationDiv.classList.add('explanation');
+                    explanationDiv.id = `explanation-${index}`;
+                    explanationDiv.style.display = 'none';
+                    questionContentDiv.appendChild(explanationDiv);
+
+                    questionDiv.appendChild(questionContentDiv);
+
+                    const questionMediaDiv = document.createElement('div');
+                    questionMediaDiv.classList.add('question-media');
+                    const img = document.createElement('img');
+                    img.src = q.image;
+                    img.alt = `Diagram for Question ${index + 1}`;
+                    img.classList.add('question-image');
+                    img.onerror = function() {
+                        this.onerror=null;
+                        this.src='https://placehold.co/400x300/cccccc/333333?text=Image+Not+Found';
+                    };
+                    questionMediaDiv.appendChild(img);
+                    questionDiv.appendChild(questionMediaDiv);
+
+                } else {
+                    questionDiv.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
+
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.classList.add('options');
+
+                    q.options.forEach(option => {
+                        const label = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `question${index}`;
+                        radio.value = option;
+                        radio.addEventListener('change', () => checkAnswer(index, option));
+                        label.appendChild(radio);
+                        label.appendChild(document.createTextNode(option));
+                        optionsDiv.appendChild(label);
+                    });
+
+                    questionDiv.appendChild(optionsDiv);
+                    const feedbackDiv = document.createElement('div');
+                    feedbackDiv.classList.add('feedback');
+                    feedbackDiv.id = `feedback-${index}`;
+                    questionDiv.appendChild(feedbackDiv);
+
+                    const explanationDiv = document.createElement('div');
+                    explanationDiv.classList.add('explanation');
+                    explanationDiv.id = `explanation-${index}`;
+                    explanationDiv.style.display = 'none';
+                    questionDiv.appendChild(explanationDiv);
+                }
+
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+
+        function checkAnswer(questionIndex, selectedOption) {
+            const question = questions[questionIndex];
+            const feedbackDiv = document.getElementById(`feedback-${questionIndex}`);
+            const explanationDiv = document.getElementById(`explanation-${questionIndex}`);
+            const radios = document.getElementsByName(`question${questionIndex}`);
+
+            radios.forEach(radio => radio.disabled = true);
+
+            if (selectedOption === question.answer) {
+                feedbackDiv.textContent = "Correct!";
+                feedbackDiv.classList.remove('incorrect');
+                feedbackDiv.classList.add('correct');
+            } else {
+                feedbackDiv.textContent = "Incorrect.";
+                feedbackDiv.classList.remove('correct');
+                feedbackDiv.classList.add('incorrect');
+            }
+
+            explanationDiv.innerHTML = `<strong>Correct Answer:</strong> ${question.answer}<br>${question.explanation}`;
+            explanationDiv.style.display = 'block';
+        }
+
+        // Disclaimer logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const disclaimerPage = document.getElementById('disclaimer-page');
+            const acceptButton = document.getElementById('accept-button');
+            const quizContainer = document.getElementById('quiz-container');
+            const quizTitle = document.getElementById('quiz-title');
+
+            acceptButton.addEventListener('click', () => {
+                disclaimerPage.style.display = 'none';
+                quizTitle.style.display = 'block';
+                quizContainer.style.display = 'block';
+                initializeQuiz(); // Initialize and display the quiz questions
+            });
+        });
+    </script>
+
+</body>
+</html>
