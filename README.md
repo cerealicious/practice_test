@@ -1,4 +1,4 @@
-# practice_test
+# ReadMe
 Important: Academic Integrity & Practice Test Usage
 This practice test is an independent study aid provided to help you prepare for your MST200 course by reinforcing your understanding of the topics on File Permissions, DHCP, and DNS. While some questions may align with concepts from previous course materials or publicly available past tests, this resource is NOT an official exam, nor is it designed to be a substitute for comprehensive study or for use in any graded assessment.
 
