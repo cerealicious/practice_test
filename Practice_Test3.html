@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="cerealicious">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MST200 Practice Test 2</title>
+    <style>
+        /* Basic styling for the body */
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter font for a modern look */
+            margin: 20px;
+            background-color: #f4f7f6; /* Light background for a clean feel */
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Styling for the main quiz container */
+        #quiz-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 25px;
+            background-color: #ffffff;
+            border-radius: 12px; /* Rounded corners for the container */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+            display: none; /* Initially hidden */
+        }
+
+        /* Styling for individual questions */
+        .question {
+            margin-bottom: 25px;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 10px; /* Rounded corners for questions */
+            background-color: #fefefe;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth hover effect */
+        }
+
+        .question:hover {
+            transform: translateY(-3px); /* Slightly lift on hover */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+        }
+
+        /* Styles for questions with images */
+        .question-with-image {
+            display: flex;
+            flex-wrap: wrap; /* Allows items to wrap to the next line on smaller screens */
+            align-items: flex-start; /* Aligns items to the top */
+            gap: 25px; /* Space between the text content and the image */
+        }
+
+        .question-content {
+            flex: 1; /* Allows the content to take up available space */
+            min-width: 300px; /* Ensures content doesn't get too narrow */
+        }
+
+        .question-media {
+            flex-shrink: 0; /* Prevents the image container from shrinking */
+            max-width: 45%; /* Limits the image container width */
+            border-radius: 8px;
+            overflow: hidden; /* Ensures image corners are rounded */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .question-with-image {
+                flex-direction: column; /* Stacks items vertically on small screens */
+            }
+            .question-media {
+                max-width: 100%; /* Image takes full width on small screens */
+            }
+        }
+
+        /* Styling for options */
+        .options label {
+            display: block;
+            margin-bottom: 10px;
+            padding: 12px 15px;
+            background-color: #f0f5f8;
+            border: 1px solid #d3e0ea;
+            border-radius: 8px; /* Rounded corners for options */
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+
+        .options label:hover {
+            background-color: #e2eaf0;
+            border-color: #a7c0d8;
+        }
+
+        .options input[type="radio"] {
+            margin-right: 10px;
+            accent-color: #007bff; /* Highlight radio button with a blue color */
+        }
+
+        /* Feedback messages */
+        .feedback {
+            margin-top: 15px;
+            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        .correct {
+            color: #1a7a1a; /* Darker green for correct answers */
+            background-color: #e6ffe6; /* Light green background */
+            border: 1px solid #66cc66;
+        }
+
+        .incorrect {
+            color: #cc3300; /* Darker red for incorrect answers */
+            background-color: #ffe6e6; /* Light red background */
+            border: 1px solid #ff6666;
+        }
+
+        /* Explanation section */
+        .explanation {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #e9f0f5; /* Light blue-grey background */
+            border-left: 5px solid #007bff; /* Blue border on the left */
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        .explanation i {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            display: block; /* Removes extra space below the image */
+            border-radius: 8px; /* Rounded corners for images */
+            object-fit: contain; /* Ensures the entire image is visible */
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 600;
+        }
+
+        /* Disclaimer Page Styling */
+        #disclaimer-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh; /* Occupy most of the viewport height */
+            text-align: center;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            margin: 50px auto;
+        }
+
+        #disclaimer-page h2 {
+            color: #007bff;
+            font-size: 1.5em; /* Adjusted to your preference for smaller heading */
+            margin-bottom: 20px;
+        }
+
+        #disclaimer-page p {
+            font-size: 0.95em; /* Adjusted to your preference for smaller body text */
+            margin-bottom: 25px;
+            color: #555;
+        }
+
+        #accept-button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+        }
+
+        #accept-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="disclaimer-page">
+        <h2>Important: Academic Integrity & Usage</h2>
+        <p>This practice test is an independent study aid for MST200, designed for <b>personal practice and self-assessment only</b>. While some questions may align with concepts from previous course materials or publicly available past tests, it is <b>NOT</b> an official exam or a tool for academic dishonesty.</p>
+        <p>Please note there may be <b>unintentional errors in the questions or explanations</b>. Always cross-reference with your official course materials.</p>
+        <p>By clicking "Accept," you agree to use this resource responsibly and ethically. <b>I am not liable nor can I be held responsible for any academic penalties or consequences resulting from the misuse of this material or from any errors within it.</b></p>
+        <p>Always adhere to your institution's academic integrity policies.</p>
+        <button id="accept-button">Accept and Start Quiz</button>
+    </div>
+
+    <h1 style="display: none;" id="quiz-title">MST200 Practice Test 2</h1>
+    <div id="quiz-container"></div>
+
+    <script>
+        const originalQuestions = [
+            // MULTIPLE CHOICE QUESTIONS
+            {
+                question: "What is the primary purpose of a DHCP server in a network?",
+                options: ["To manage print jobs", "To assign IP addresses automatically", "To store user account information", "To resolve domain names"],
+                answer: "To assign IP addresses automatically",
+                explanation: "A DHCP server automates the assignment of IP addresses, subnet masks, default gateways, and other TCP/IP settings to clients on a network.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 4: 'It’s client/server TCP/IP protocol... provide Internet Protocol(IP) information to their clients, including IP addresses, DNS IPs, Default Gateways, Subnet Masks, etc'</i>"
+            },
+            {
+                question: "Which protocol is used by DNS servers to translate domain names into IP addresses?",
+                options: ["TCP", "UDP", "Both TCP and UDP", "None of the above"],
+                answer: "Both TCP and UDP",
+                explanation: "DNS uses both TCP and UDP protocols. UDP is typically used for standard queries, while TCP is used for zone transfers and queries that exceed 512 bytes.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 22: 'Domain Name System (DNS) • TCP/IP application protocol' (DNS uses both, TCP for zone transfers and UDP for queries)</i>"
+            },
+            {
+                question: "What is the benefit of using printer pooling in a high-volume printing environment?",
+                options: ["Reduces printer maintenance costs", "Increases printer speed", "Provides redundancy and load balancing", "Improves print quality"],
+                answer: "Provides redundancy and load balancing",
+                explanation: "Printer pooling allows multiple physical printers to be associated with a single logical printer, providing redundancy and distributing print jobs across devices.<br><i>Reference: Week6-PrintingServices.pdf, Page 19: 'Printer Pooling allows multiple physical printers to be associated with a single printer (software interface) for high volume businesses'</i>"
+            },
+            {
+                question: "Which of the following is NOT a component of Windows Print Architecture?",
+                options: ["Spooler", "Router", "Print Provider", "Network Interface Card"],
+                answer: "Network Interface Card",
+                explanation: "The Network Interface Card (NIC) is a hardware component of a computer, not a software component of the Windows Print Architecture. Components include Print Device, Printer, Print Job, Print Client, Print Server, Driver, Print Queue, and Spooler.<br><i>Reference: Week6-PrintingServices.pdf, Page 5: 'Windows Print Architecture Components'</i>"
+            },
+            {
+                question: "What is the correct sequence of packets in the DHCP process?",
+                options: ["Discover, Offer, Request, Acknowledge", "Request, Discover, Offer, Acknowledge", "Offer, Discover, Request, Acknowledge", "Acknowledge, Discover, Offer, Request"],
+                answer: "Discover, Offer, Request, Acknowledge",
+                explanation: "The DHCP process follows the DORA sequence: Discover, Offer, Request, Acknowledge.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 6: 'DHCP Process (DORA): • Discover • Offer • Request • Acknowledge'</i>"
+            },
+            {
+                question: "Which type of group is best suited for managing resources in a single domain?",
+                options: ["Universal Group", "Global Group", "Domain Local Group", "Distribution Group"],
+                answer: "Domain Local Group",
+                explanation: "Domain Local Groups are used within a single domain to manage resources so that Global and Universal groups can access those resources. They are best suited for assigning permissions to resources within their own domain.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 11: 'Steps for Managing Folder and File Security: • Create user accounts and groups' (Implies group types are discussed in context of security, though specific group types are not detailed on this page in the provided PDF snippet, this is general Microsoft knowledge.)</i>"
+            },
+            {
+                question: "What is the purpose of a DHCP scope?",
+                options: ["To define the range of IP addresses available for assignment", "To set the default gateway", "To configure DNS servers", "To manage print jobs"],
+                answer: "To define the range of IP addresses available for assignment",
+                explanation: "A DHCP scope specifies the pool of IP addresses that a DHCP server can assign to clients. It is the fundamental configuration element for DHCP services.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 12: 'Configuring a DHCP Server: • Set up one or more scopes: Range of addresses to be given out by the DHCP Server'</i>"
+            },
+            {
+                question: "Which of the following is NOT a benefit of using DNS in Active Directory?",
+                options: ["Enables replication between Domain Controllers", "Allows users to find Domain Controllers for login", "Manages printer drivers", "Resolves domain names to IP addresses"],
+                answer: "Manages printer drivers",
+                explanation: "DNS is crucial for resolving domain names and locating Domain Controllers for replication and client logins. However, managing printer drivers is a function of print services, not DNS.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 23: 'DNS and Active Directory: • DNS is used to locate Domain Controllers on the network • For client login • For Domain Controller replication • When users need to find a resource on the network'</i>"
+            },
+            {
+                question: "What is the role of a print server in a network?",
+                options: ["Manages print jobs and provides centralized control over printers", "Assigns IP addresses to clients", "Stores user account information", "Translates domain names to IP addresses"],
+                answer: "Manages print jobs and provides centralized control over printers",
+                explanation: "A print server acts as a central point for managing print jobs, controlling access to printers, and spooling documents, providing centralized management over printing services.<br><i>Reference: Week6-PrintingServices.pdf, Page 4: 'Print and Document Services on a Windows Server allows you to manage printing: Configure • Control who has access to each printer • Control priorities of users and print jobs • Control print permissions'</i>"
+            },
+            {
+                question: "Which of the following is NOT a type of security group in Active Directory?",
+                options: ["Local Group", "Domain Local Group", "Global Group", "Distribution Group"],
+                answer: "Distribution Group",
+                explanation: "Distribution Groups are used for email distribution lists and cannot be used to assign permissions to resources. Local, Domain Local, and Global groups are security group types.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 11: 'Steps for Managing Folder and File Security: • Create user accounts and groups' (General Microsoft knowledge, not explicitly in provided PDF snippet but relevant to context.)</i>"
+            },
+            {
+                question: "What is the purpose of a reservation in DHCP?",
+                options: ["To ensure a specific device always receives the same IP address", "To exclude certain IP addresses from being assigned", "To increase the lease duration", "To provide redundancy"],
+                answer: "To ensure a specific device always receives the same IP address",
+                explanation: "DHCP reservations link a specific IP address to a device's MAC address, ensuring that the designated device consistently receives that particular IP address from the DHCP scope.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 16: 'Reservations: Ensures DHCP clients always receive the same IP address from the scope'</i>"
+            },
+            {
+                question: "Which of the following is NOT a type of DNS record?",
+                options: ["A Record", "MX Record", "CNAME Record", "IPSec Record"],
+                answer: "IPSec Record",
+                explanation: "IPSec (Internet Protocol Security) is a suite of protocols for securing IP communications, not a type of DNS resource record. Common DNS records include A, AAAA, CNAME, MX, NS, PTR, and SOA.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 29: 'DNS Records' (lists common record types, IPSec is not among them)</i>"
+            },
+            {
+                question: "What is the purpose of a home directory in a shared folder environment?",
+                options: ["Serves as a designated workspace for users to store files", "Acts as a backup location for system files", "Provides temporary storage for print jobs", "Manages network printer drivers"],
+                answer: "Serves as a designated workspace for users to store files",
+                explanation: "A home directory is a dedicated server folder associated with a user's account, serving as their personal workspace for storing files on a network.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 40: 'Best Practices for File Servers: • Use home folders for users to store files'</i>"
+            },
+            {
+                question: "Which of the following is NOT a step in the printing process?",
+                options: ["Software application generates a print file", "Application communicates with GDI", "Print provider sends the file directly to the printer", "Spooler manages print jobs"],
+                answer: "Print provider sends the file directly to the printer",
+                explanation: "In the Windows printing process, the Print Monitor pulls the file from the spooler's disk storage and sends it to the printer, not the Print Provider directly. The Print Provider works with the Print Processor to format the file.<br><i>Reference: Week6-PrintingServices.pdf, Page 11: 'The Printing Process: • Print monitor pulls file from spooler’s disk storage and sends it to printer'</i>"
+            },
+            {
+                question: "What is the purpose of a DHCP failover configuration?",
+                options: ["To increase the speed of IP address assignment", "To provide redundancy and load balancing", "To extend the lease duration", "To reduce network traffic"],
+                answer: "To provide redundancy and load balancing",
+                explanation: "DHCP failover ensures that if one server fails, another can continue to provide IP addresses and services, and it can also distribute the workload between two DHCP servers.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 18: 'DHCP Failover: Provides redundancy in case one DHCP server becomes unavailable • Can also be used for load balancing'</i>"
+            },
+
+            // TRUE/FALSE QUESTIONS
+            {
+                question: "DHCP reduces the risk of human error when configuring TCP/IP settings.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "DHCP automates the configuration of TCP/IP settings, minimizing manual input errors. This automation significantly reduces the likelihood of human errors such as typing mistakes or duplicate addresses.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 5: 'Benefits of DHCP: With DHCP • Automatic configuration of TCP/IP • Addresses are automatically allocated from the server’s pool'</i>"
+            },
+            {
+                question: "A DNS server is required for Active Directory to function properly.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "Active Directory relies on DNS for locating Domain Controllers and enabling client logins. Without a DNS server, Active Directory cannot function correctly.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 23: 'DNS and Active Directory: • Active Directory requires DNS and a DNS server must be present on the network for Active Directory to work'</i>"
+            },
+            {
+                question: "Printer pooling requires multiple physical printers to be associated with a single logical printer.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "Printer pooling combines multiple physical printers under a single logical printer for redundancy and load balancing in high-volume environments.<br><i>Reference: Week6-PrintingServices.pdf, Page 19: 'Printer Pooling allows multiple physical printers to be associated with a single printer (software interface) for high volume businesses'</i>"
+            },
+            {
+                question: "A DHCP scope can contain options like the default gateway and subnet mask.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "A DHCP scope defines the range of IP addresses and can include additional network configuration options such as the default gateway, subnet mask, and DNS servers, which are passed to clients.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 12: 'Configuring a DHCP Server: • Configure the Subnet Mask • Configure DHCP Options (Scope Options or Server Options)' and Page 14: 'Router (Default Gateway)'</i>"
+            },
+            {
+                question: "A Domain Local Group can accept members from any domain in the forest.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "Domain Local Groups are limited to a single domain and are primarily used to assign permissions to resources within that domain. They can contain users and global groups from any domain in the forest, but the group itself resides in one domain.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 11: 'Steps for Managing Folder and File Security: • Create user accounts and groups' (General Microsoft knowledge, not explicitly in provided PDF snippet but relevant to context.)</i>"
+            },
+            {
+                question: "A CNAME record maps a domain name to an IPv4 address.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "A CNAME (Canonical Name) record creates an alias that points to the canonical (real) name of a host. An A record maps a domain name to an IPv4 address.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 29: 'CNAME (Canonical Name) • Creates an alias that points to the canonical name (that is, the \"real\" name) of a host identified by an A record.'</i>"
+            },
+            {
+                question: "A print server must be configured to use bidirectional support for printer status updates.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "Bidirectional support allows the printer to communicate its status (e.g., paper low, out of ink) back to the print server, providing valuable real-time information for management.<br><i>Reference: Week6-PrintingServices.pdf, Page 19: 'Bidirectional support allows the printer to communicate its status with the server - printer and print job status information can be shared'</i>"
+            },
+            {
+                question: "DHCP increases the risk of IP address conflicts because it assigns the same IP address to multiple clients.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "DHCP reduces the risk of IP address conflicts by tracking leases and ensuring unique assignments from its address pool. It prevents the same address from being given to multiple computers.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 5: 'Benefits of DHCP: With DHCP • Server tracks IP leases and does not give the same address to multiple computers'</i>"
+            },
+            {
+                question: "A global group can be nested within a universal group.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "Global groups can be nested within universal groups, which is a common practice in Active Directory for managing permissions across multiple domains.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 11: 'Steps for Managing Folder and File Security: • Create user accounts and groups' (General Microsoft knowledge, not explicitly in provided PDF snippet but relevant to context.)</i>"
+            },
+            {
+                question: "A DHCP relay agent is used to forward DHCP requests across subnets.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "A DHCP relay agent (or IP Helper) is configured on routers or servers to forward broadcast DHCP Discover messages from clients on one subnet to a DHCP server located on a different subnet.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 19: 'DHCP on Multiple Subnets: ...you can set up a Windows Server as a router using the Routing and Remote Access role and configure a Relay Agent.'</i>"
+            },
+            {
+                question: "A DNS server can resolve domain names to IPv6 addresses using AAAA records.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "AAAA (Quad-A) records are specifically designed in DNS to provide a name-to-address mapping that supplies an IPv6 address for a specific DNS name.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 29: 'AAAA (Address) • Provides a name-to-address mapping that supplies an IPv6 address for a specific DNS name.'</i>"
+            },
+            {
+                question: "A print server must be installed on every workstation to manage printers.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "A print server is typically installed on a central server, not on every workstation. Workstations act as print clients that send jobs to the print server.<br><i>Reference: Week6-PrintingServices.pdf, Page 5: 'Print Server - server or computer that receives print jobs from clients that are attached locally or over the network'</i>"
+            },
+            {
+                question: "A DHCP scope can be configured to exclude certain IP addresses from being assigned.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "DHCP scopes allow administrators to define exclusions, which are specific IP addresses or ranges of IP addresses within the scope that should not be assigned to clients.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 13: 'New Scope Wizard: Add Exclusions and Delay: Exclusions are addresses or a range of addresses that are not distribute[d by the] server.'</i>"
+            },
+            {
+                question: "A domain local group can be nested within a global group.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "Domain local groups cannot be nested within global groups. The general rule for nesting is Global groups into Universal groups, and Universal groups into Domain Local groups (AGDLP).<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 11: 'Steps for Managing Folder and File Security: • Create user accounts and groups' (General Microsoft knowledge, not explicitly in provided PDF snippet but relevant to context.)</i>"
+            },
+            {
+                question: "A DNS server resolves domain names to IP addresses using only TCP.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "DNS uses both TCP and UDP. UDP is primarily used for standard DNS queries due to its speed, while TCP is used for zone transfers and queries that require reliable, connection-oriented communication.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 22: 'Domain Name System (DNS) • TCP/IP application protocol' (DNS uses both, TCP for zone transfers and UDP for queries)</i>"
+            },
+            {
+                question: "A print server can manage print jobs and provide centralized control over printers.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "A print server acts as a central point for managing print jobs and controlling access to printers on the network, providing centralized management.<br><i>Reference: Week6-PrintingServices.pdf, Page 4: 'Print and Document Services on a Windows Server allows you to manage printing: Configure • Control who has access to each printer • Control priorities of users and print jobs • Control print permissions'</i>"
+            }
+        ];
+
+        let questions; // Declare questions in a scope accessible by checkAnswer
+
+        // Function to shuffle an array (Fisher-Yates algorithm)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+            return array;
+        }
+
+        // Initialize quiz
+        function initializeQuiz() {
+            // Filter questions into their respective types
+            const multipleChoiceQuestions = originalQuestions.filter(q => q.options.length > 2 && !q.image);
+            const trueFalseQuestions = originalQuestions.filter(q => q.options.length === 2 && (q.options.includes("True") || q.options.includes("False")));
+            const imageQuestions = originalQuestions.filter(q => q.image);
+
+            // Shuffle each group independently
+            const shuffledMultipleChoice = shuffleArray(multipleChoiceQuestions);
+            const shuffledTrueFalse = shuffleArray(trueFalseQuestions);
+            const shuffledImageQuestions = shuffleArray(imageQuestions);
+
+            // Combine the shuffled groups. You can adjust the order here if you prefer.
+            // For example, to have all MC, then all T/F, then all Image:
+            questions = [...shuffledMultipleChoice, ...shuffledTrueFalse, ...shuffledImageQuestions]; // Assign to the global 'questions' variable
+
+            // Shuffle options for each question, but skip for True/False questions
+            questions.forEach(q => {
+                const isTrueFalseQuestion = q.options.length === 2 &&
+                                            ((q.options[0] === "True" && q.options[1] === "False") ||
+                                             (q.options[0] === "False" && q.options[1] === "True"));
+
+                if (!isTrueFalseQuestion) {
+                    q.options = shuffleArray(q.options);
+                }
+            });
+
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = ''; // Clear previous questions if any
+
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+
+                if (q.image) {
+                    questionDiv.classList.add('question-with-image');
+
+                    const questionContentDiv = document.createElement('div');
+                    questionContentDiv.classList.add('question-content');
+
+                    questionContentDiv.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
+
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.classList.add('options');
+
+                    q.options.forEach(option => {
+                        const label = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `question${index}`;
+                        radio.value = option;
+                        radio.addEventListener('change', () => checkAnswer(index, option));
+                        label.appendChild(radio);
+                        label.appendChild(document.createTextNode(option));
+                        optionsDiv.appendChild(label);
+                    });
+
+                    questionContentDiv.appendChild(optionsDiv);
+
+                    const feedbackDiv = document.createElement('div');
+                    feedbackDiv.classList.add('feedback');
+                    feedbackDiv.id = `feedback-${index}`;
+                    questionContentDiv.appendChild(feedbackDiv);
+
+                    const explanationDiv = document.createElement('div');
+                    explanationDiv.classList.add('explanation');
+                    explanationDiv.id = `explanation-${index}`;
+                    explanationDiv.style.display = 'none';
+                    questionContentDiv.appendChild(explanationDiv);
+
+                    questionDiv.appendChild(questionContentDiv);
+
+                    const questionMediaDiv = document.createElement('div');
+                    questionMediaDiv.classList.add('question-media');
+                    const img = document.createElement('img');
+                    img.src = q.image;
+                    img.alt = `Diagram for Question ${index + 1}`;
+                    img.classList.add('question-image');
+                    img.onerror = function() {
+                        this.onerror=null;
+                        this.src='https://placehold.co/400x300/cccccc/333333?text=Image+Not+Found';
+                    };
+                    questionMediaDiv.appendChild(img);
+                    questionDiv.appendChild(questionMediaDiv);
+
+                } else {
+                    questionDiv.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
+
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.classList.add('options');
+
+                    q.options.forEach(option => {
+                        const label = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `question${index}`;
+                        radio.value = option;
+                        radio.addEventListener('change', () => checkAnswer(index, option));
+                        label.appendChild(radio);
+                        label.appendChild(document.createTextNode(option));
+                        optionsDiv.appendChild(label);
+                    });
+
+                    questionDiv.appendChild(optionsDiv);
+                    const feedbackDiv = document.createElement('div');
+                    feedbackDiv.classList.add('feedback');
+                    feedbackDiv.id = `feedback-${index}`;
+                    questionDiv.appendChild(feedbackDiv);
+
+                    const explanationDiv = document.createElement('div');
+                    explanationDiv.classList.add('explanation');
+                    explanationDiv.id = `explanation-${index}`;
+                    explanationDiv.style.display = 'none';
+                    questionDiv.appendChild(explanationDiv);
+                }
+
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+
+        function checkAnswer(questionIndex, selectedOption) {
+            const question = questions[questionIndex];
+            const feedbackDiv = document.getElementById(`feedback-${questionIndex}`);
+            const explanationDiv = document.getElementById(`explanation-${questionIndex}`);
+            const radios = document.getElementsByName(`question${questionIndex}`);
+
+            radios.forEach(radio => radio.disabled = true);
+
+            if (selectedOption === question.answer) {
+                feedbackDiv.textContent = "Correct!";
+                feedbackDiv.classList.remove('incorrect');
+                feedbackDiv.classList.add('correct');
+            } else {
+                feedbackDiv.textContent = "Incorrect.";
+                feedbackDiv.classList.remove('correct');
+                feedbackDiv.classList.add('incorrect');
+            }
+
+            explanationDiv.innerHTML = `<strong>Correct Answer:</strong> ${question.answer}<br>${question.explanation}`;
+            explanationDiv.style.display = 'block';
+        }
+
+        // Disclaimer logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const disclaimerPage = document.getElementById('disclaimer-page');
+            const acceptButton = document.getElementById('accept-button');
+            const quizContainer = document.getElementById('quiz-container');
+            const quizTitle = document.getElementById('quiz-title');
+
+            acceptButton.addEventListener('click', () => {
+                disclaimerPage.style.display = 'none';
+                quizTitle.style.display = 'block';
+                quizContainer.style.display = 'block';
+                initializeQuiz(); // Initialize and display the quiz questions
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="cerealicious">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MST200 Practice Test 2</title>
+    <style>
+        /* Basic styling for the body */
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter font for a modern look */
+            margin: 20px;
+            background-color: #f4f7f6; /* Light background for a clean feel */
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Styling for the main quiz container */
+        #quiz-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 25px;
+            background-color: #ffffff;
+            border-radius: 12px; /* Rounded corners for the container */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+            display: none; /* Initially hidden */
+        }
+
+        /* Styling for individual questions */
+        .question {
+            margin-bottom: 25px;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 10px; /* Rounded corners for questions */
+            background-color: #fefefe;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth hover effect */
+        }
+
+        .question:hover {
+            transform: translateY(-3px); /* Slightly lift on hover */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+        }
+
+        /* Styles for questions with images */
+        .question-with-image {
+            display: flex;
+            flex-wrap: wrap; /* Allows items to wrap to the next line on smaller screens */
+            align-items: flex-start; /* Aligns items to the top */
+            gap: 25px; /* Space between the text content and the image */
+        }
+
+        .question-content {
+            flex: 1; /* Allows the content to take up available space */
+            min-width: 300px; /* Ensures content doesn't get too narrow */
+        }
+
+        .question-media {
+            flex-shrink: 0; /* Prevents the image container from shrinking */
+            max-width: 45%; /* Limits the image container width */
+            border-radius: 8px;
+            overflow: hidden; /* Ensures image corners are rounded */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .question-with-image {
+                flex-direction: column; /* Stacks items vertically on small screens */
+            }
+            .question-media {
+                max-width: 100%; /* Image takes full width on small screens */
+            }
+        }
+
+        /* Styling for options */
+        .options label {
+            display: block;
+            margin-bottom: 10px;
+            padding: 12px 15px;
+            background-color: #f0f5f8;
+            border: 1px solid #d3e0ea;
+            border-radius: 8px; /* Rounded corners for options */
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+
+        .options label:hover {
+            background-color: #e2eaf0;
+            border-color: #a7c0d8;
+        }
+
+        .options input[type="radio"] {
+            margin-right: 10px;
+            accent-color: #007bff; /* Highlight radio button with a blue color */
+        }
+
+        /* Feedback messages */
+        .feedback {
+            margin-top: 15px;
+            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        .correct {
+            color: #1a7a1a; /* Darker green for correct answers */
+            background-color: #e6ffe6; /* Light green background */
+            border: 1px solid #66cc66;
+        }
+
+        .incorrect {
+            color: #cc3300; /* Darker red for incorrect answers */
+            background-color: #ffe6e6; /* Light red background */
+            border: 1px solid #ff6666;
+        }
+
+        /* Explanation section */
+        .explanation {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #e9f0f5; /* Light blue-grey background */
+            border-left: 5px solid #007bff; /* Blue border on the left */
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        .explanation i {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            display: block; /* Removes extra space below the image */
+            border-radius: 8px; /* Rounded corners for images */
+            object-fit: contain; /* Ensures the entire image is visible */
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 600;
+        }
+
+        /* Disclaimer Page Styling */
+        #disclaimer-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh; /* Occupy most of the viewport height */
+            text-align: center;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            margin: 50px auto;
+        }
+
+        #disclaimer-page h2 {
+            color: #007bff;
+            font-size: 1.5em; /* Adjusted to your preference for smaller heading */
+            margin-bottom: 20px;
+        }
+
+        #disclaimer-page p {
+            font-size: 0.95em; /* Adjusted to your preference for smaller body text */
+            margin-bottom: 25px;
+            color: #555;
+        }
+
+        #accept-button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+        }
+
+        #accept-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="disclaimer-page">
+        <h2>Important: Academic Integrity & Usage</h2>
+        <p>This practice test is an independent study aid for MST200, designed for <b>personal practice and self-assessment only</b>. While some questions may align with concepts from previous course materials or publicly available past tests, it is <b>NOT</b> an official exam or a tool for academic dishonesty.</p>
+        <p>Please note there may be <b>unintentional errors in the questions or explanations</b>. Always cross-reference with your official course materials.</p>
+        <p>By clicking "Accept," you agree to use this resource responsibly and ethically. <b>I am not liable nor can I be held responsible for any academic penalties or consequences resulting from the misuse of this material or from any errors within it.</b></p>
+        <p>Always adhere to your institution's academic integrity policies.</p>
+        <button id="accept-button">Accept and Start Quiz</button>
+    </div>
+
+    <h1 style="display: none;" id="quiz-title">MST200 Practice Test 2</h1>
+    <div id="quiz-container"></div>
+
+    <script>
+const originalQuestions = [
+            // --- Multiple Choice Questions (15 questions) ---
+            {
+                question: "Which Windows file system supports file permissions for security, a change journal for error recovery, and shadow copies for backups?",
+                options: ["FAT32", "exFAT", "NTFS", "ReFS"],
+                answer: "NTFS",
+                explanation: "NTFS (New Technology File System) is the modern, robust Windows file system that offers advanced features like file permissions for security, a change journal for quick error recovery, shadow copies for backups, encryption, compression, and disk quota limits.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 6: 'NTFS - New Technology File System: Modern, robust, Windows file system • supports file permissions for security • a change journal that can help quickly recover errors if your computer crashes • shadow copies for backups • encryption • compression • disk quota limits, and various other features.'</i>"
+            },
+            {
+                question: "What is the primary purpose of a File Server?",
+                options: [
+                    "To run complex applications for users.",
+                    "To provide central storage and management of data files accessible by multiple systems/users.",
+                    "To act as a gateway for internet access.",
+                    "To manage printing services for a network."
+                ],
+                answer: "To provide central storage and management of data files accessible by multiple systems/users.",
+                explanation: "A File Server is a computer responsible for the centralized storage and management of data files, allowing multiple systems and users to access them. It also provides benefits like remote access, centralized permission management, and data security/backup.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 3: 'What is a File Server? a computer responsible for the central storage and management of data files that can be accessed by multiple systems/users'</i>"
+            },
+            {
+                question: "Which file system is Microsoft's newest, designed for large data sets, and automatically detects and fixes errors even while files are in use?",
+                options: ["FAT", "NTFS", "ReFS", "FAT32"],
+                answer: "ReFS",
+                explanation: "ReFS (Resilient File System) is Microsoft's newest file system, specifically designed for large data sets. It improves efficiency, scalability, and reliability by automatically detecting and fixing errors, even when files are actively being used.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 7: 'ReFS – Resilient File System: Microsoft's newest file system • Used for large data sets • Improves efficiency, scalability and reliability • Automatically detects errors and fixes them, even while files are in use'</i>"
+            },
+            {
+                question: "What happens to the permissions of a file when it is copied to a different NTFS partition?",
+                options: [
+                    "Permissions are retained from the source.",
+                    "Permissions are lost and revert to default.",
+                    "Permissions are inherited from the destination folder.",
+                    "The user is prompted to set new permissions."
+                ],
+                answer: "Permissions are inherited from the destination folder.",
+                explanation: "When a file is copied, regardless of whether it's within the same drive or to a different drive, the new copy inherits the permissions of the destination folder. This ensures the copied file aligns with the security context of its new location.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 21: 'Copying Files and Folders examples: Permissions = Destination Folder' (for both same and different NTFS partitions when copying)</i>"
+            },
+            {
+                question: "Which attribute indicates that a folder or file needs to be backed up because it is new or has been changed?",
+                options: ["Read-only", "Hidden", "Archive", "Index"],
+                answer: "Archive",
+                explanation: "The Archive attribute is checked (set) to indicate that a folder or file is new or has been modified, signaling that it needs to be included in the next backup operation.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 9: 'Archive attribute: Checked to indicate that the folder or file needs to be backed up because it is new or changed'</i>"
+            },
+            {
+                question: "What is the correct order of the four packets involved in the DHCP process?",
+                options: [
+                    "Request, Discover, Acknowledge, Offer",
+                    "Discover, Offer, Request, Acknowledge",
+                    "Offer, Discover, Acknowledge, Request",
+                    "Acknowledge, Request, Offer, Discover"
+                ],
+                answer: "Discover, Offer, Request, Acknowledge",
+                explanation: "The DHCP process follows the DORA sequence: Discover (client finds server), Offer (server offers IP), Request (client requests offered IP), and Acknowledge (server confirms lease).<br><i>Reference: Week8-DHCP-DNS.pdf, Page 6: 'DHCP Process (DORA): • Discover • Offer • Request • Acknowledge'</i>"
+            },
+            {
+                question: "Which DHCP feature allows a specific client to always receive the same IP address from the scope?",
+                options: ["Exclusion", "Reservation", "Lease", "Policy"],
+                answer: "Reservation",
+                explanation: "A DHCP reservation ensures that a specific DHCP client, identified by its MAC address, always receives the same IP address from the DHCP scope. This is crucial for devices that require a consistent IP.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 16: 'Reservations: Ensures DHCP clients always receive the same IP address from the scope'</i>"
+            },
+            {
+                question: "What is the primary benefit of using DHCP on a network?",
+                options: [
+                    "It allows manual configuration of TCP/IP settings on every device.",
+                    "It increases the possibility of duplicate IP addresses.",
+                    "It automates TCP/IP configuration, saving time and reducing errors.",
+                    "It is only useful for very small networks."
+                ],
+                answer: "It automates TCP/IP configuration, saving time and reducing errors.",
+                explanation: "The main benefit of DHCP is the automatic configuration of TCP/IP settings for clients. This automation significantly reduces administrative overhead, saves time, and minimizes the risk of human errors like incorrect or duplicate IP addresses.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 5: 'Benefits of DHCP: With DHCP • Automatic configuration of TCP/IP • Configure scope on the server only • Default configuration on clients • Addresses are automatically allocated from the server’s pool • Server tracks IP leases and does not give the same address to multiple computers'</i>"
+            },
+            {
+                question: "Which service is essential for Active Directory to function correctly, enabling Domain Controllers to find each other and clients to locate Domain Controllers for login?",
+                options: ["DHCP", "DNS", "WINS", "SMB"],
+                answer: "DNS",
+                explanation: "Active Directory relies heavily on DNS. A DNS server must be present on the network for Active Directory to work, as it's used to locate Domain Controllers for replication and for client login processes.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 23: 'DNS and Active Directory: • Active Directory requires DNS and a DNS server must be present on the network for Active Directory to work • DNS is used to locate Domain Controllers on the network • For client login • For Domain Controller replication • When users need to find a resource on the network'</i>"
+            },
+            {
+                question: "Which DNS resource record provides a name-to-address mapping for an IPv4 address?",
+                options: ["NS", "PTR", "AAAA", "A"],
+                answer: "A",
+                explanation: "An 'A' (Address) record in DNS is used to map a hostname to an IPv4 address. It performs the primary function of DNS: converting human-readable names into numerical IP addresses.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 29: 'DNS Records: A (Address) • Provides a name-to-address mapping that supplies an IPv4 address for a specific DNS name. This record type performs the primary function of the DNS: converting names to addresses'</i>"
+            },
+            {
+                question: "What is the effective permission when a user has 'Read' NTFS permission and 'Full Control' Share permission on a shared folder?",
+                options: ["Full Control", "Read", "Modify", "No Access"],
+                answer: "Read",
+                explanation: "When combining Share and NTFS permissions, the most restrictive permission is always the effective permission. In this case, 'Read' is more restrictive than 'Full Control', so the user will only have 'Read' access.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 34: 'Combining Shared Folder Permissions and NTFS Permissions: • The most restrictive permission is the effective permission'</i>"
+            },
+            {
+                question: "Which of the following is a best practice for managing file servers?",
+                options: [
+                    "Keep the directory structure as deep as possible.",
+                    "Assign the least restrictive permissions possible, even if not needed.",
+                    "Use intuitive share names so users can easily recognize and locate resources.",
+                    "Always deny access to the 'Everyone' group for all shares."
+                ],
+                answer: "Use intuitive share names so users can easily recognize and locate resources.",
+                explanation: "Best practices for file servers include keeping the directory structure shallow, using home folders and departmental folders, and using intuitive share names to help users easily find and locate resources. Permissions should be assigned with the principle of least privilege.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 40: 'Best Practices for File Servers: • Use intuitive share names so users can easily recognize and locate resources'</i>"
+            },
+            {
+                question: "What is the purpose of 'Printer Pooling'?",
+                options: [
+                    "To allow multiple users to print to a single printer simultaneously.",
+                    "To associate multiple physical printers with a single logical printer for high volume.",
+                    "To automatically install printer drivers on client computers.",
+                    "To configure printer priority for print jobs."
+                ],
+                answer: "To associate multiple physical printers with a single logical printer for high volume.",
+                explanation: "Printer Pooling allows multiple physical print devices to be associated with a single logical printer (software interface). This is useful in high-volume environments to distribute print jobs among available physical printers, increasing efficiency.<br><i>Reference: Week6-PrintingServices.pdf, Page 19: 'Printer Properties – Ports Tab: • Printer Pooling allows multiple physical printers to be associated with a single printer (software interface) for high volume businesses'</i>"
+            },
+            {
+                question: "Which Microsoft cloud service is a collaboration tool for businesses that need multiple individuals and teams to work on documents and products simultaneously, offering dashboards, calendars, and tasks?",
+                options: ["OneDrive", "Microsoft 365", "SharePoint", "Azure AD"],
+                answer: "SharePoint",
+                explanation: "SharePoint is a powerful collaboration tool designed for businesses. It provides a collaborative workspace with features like dashboards, calendars, tasks, and notifications, allowing multiple individuals and teams to work on documents and projects concurrently.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 43: 'SharePoint: a collaboration tool for businesses that need multiple individuals and teams to work on documents and products at the same time'</i>"
+            },
+            {
+                question: "What is Universal Print?",
+                options: [
+                    "A legacy print solution requiring on-premises print servers.",
+                    "A cloud-based print solution that runs entirely on Microsoft Azure.",
+                    "A tool for managing print jobs on individual client computers.",
+                    "A service that only supports direct-attached printers."
+                ],
+                answer: "A cloud-based print solution that runs entirely on Microsoft Azure.",
+                explanation: "Universal Print is a modern, cloud-based print solution from Microsoft that runs entirely on Microsoft Azure. It allows organizations to manage their print infrastructure through cloud services, eliminating the need for on-premises print servers and printer driver installations on devices.<br><i>Reference: Week6-PrintingServices.pdf, Page 30: '*NEW* - Universal Print: a cloud-based print solution: A modern print solution that organizations can use to manage their print infrastructure through cloud services from Microsoft. • runs entirely on Microsoft Azure.'</i>"
+            },
+
+            // --- True/False Questions (15 questions) ---
+            {
+                question: "The Read-only attribute prevents a file from being deleted.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "The Read-only attribute makes a file write-protected and applies to all users, but it does not prevent the file from being deleted.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 9: 'Read-only Attribute: Write-protected. Separate from permissions, applies to all users. Does not prevent file deletion.'</i>"
+            },
+            {
+                question: "Explicit permissions are permissions that are inherited from a parent object.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "Explicit permissions are those set directly on an object by default or by user action. Inherited permissions are those an object receives from its parent.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 13: 'Explicit vs Inherited Permissions: • Explicit permissions are permissions that are set by default when the object is created, or by user action. • Inherited permissions are permissions that are given to an object because it is a child of a parent object.'</i>"
+            },
+            {
+                question: "File permissions always override folder permissions in NTFS.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "In NTFS, if a file has explicit permissions set, those permissions will take precedence over any inherited folder permissions. This allows for more granular control at the file level.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 14: 'NTFS Permissions Rules: • File Permissions Override Folder Permissions'</i>"
+            },
+            {
+                question: "When you move a file within the same NTFS partition, the file retains its original permissions.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "When a file is moved within the same NTFS partition, it retains its original permissions because it's essentially just changing its location within the same file system volume.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 22: 'Moving Files and Folders examples: Permissions = Full Control' (for moving within the same NTFS partition)</i>"
+            },
+            {
+                question: "Deny permissions in NTFS override all other Allow permissions.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "The 'Deny' permission is the most powerful in NTFS. If a user is explicitly denied a permission, they will not have that permission, even if they are granted it through another group or explicit 'Allow' permission.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 14: 'NTFS Permissions Rules: • Deny Overrides Other Permissions'</i>"
+            },
+            {
+                question: "DHCP increases the risk of IP address conflicts on a network.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "DHCP actually reduces the risk of IP address conflicts by centrally managing and assigning IP addresses from a pool, ensuring that the same address is not given to multiple devices.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 5: 'Benefits of DHCP: With DHCP • Server tracks IP leases and does not give the same address to multiple computers'</i>"
+            },
+            {
+                question: "A DHCP client must be manually configured with the IP address of the DHCP server to obtain an IP address automatically.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "A DHCP client is configured to 'Obtain an IP address automatically.' It does not need to know the DHCP server's IP address beforehand; it broadcasts a discover message to find one.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 17: 'Configuring a DHCP Client: Obtain an IP address automatically'</i>"
+            },
+            {
+                question: "PowerShell can be used to install and configure DHCP and DNS roles on a Windows Server.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "PowerShell provides cmdlets for comprehensive management of Windows Server roles, including the installation and configuration of DHCP and DNS services, which is often preferred for automation and scripting.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 9: 'Using PowerShell to Install DHCP' and Page 25: 'Using PowerShell for DNS'</i>"
+            },
+            {
+                question: "DNS Reverse Lookup Zones are used to map IP addresses to host names.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "DNS Reverse Lookup Zones contain PTR (Pointer) records, which perform the opposite function of A records: they map IP addresses back to their corresponding hostnames.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 27: 'Windows Server DNS Zones: Reverse Lookup Zones • Hosts records that are used to map IP addresses to host names'</i>"
+            },
+            {
+                question: "Active Directory Integrated DNS zones are automatically replicated with Active Directory.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "When DNS is installed as part of an Active Directory Domain Controller promotion, the DNS zones become Active Directory Integrated. This means they are automatically replicated along with Active Directory, ensuring consistency and fault tolerance.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 28: 'Active Directory Integrated Zones: • DNS zones are automatically replicated with Active Directory'</i>"
+            },
+            {
+                question: "Shared folders can only be created on NTFS volumes.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "While NTFS is highly recommended for its security features, shared folders can be created on volumes formatted with other file systems like FAT32 or exFAT. However, only NTFS allows for granular file and folder permissions.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 29: 'Sharing Folders: • Share folders to make them accessible over the network' (This implies it's a general folder sharing feature, not restricted to NTFS volumes, though NTFS is needed for its specific permissions.)</i>"
+            },
+            {
+                question: "Administrative shares are hidden shares used by administrators to gain remote access to a server.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "Administrative shares (e.g., C$, ADMIN$) are hidden shares automatically created by Windows for administrative purposes, allowing remote access to server resources. They typically end with a '$' to signify their hidden nature.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 29: 'Sharing Folders: • Administrative shares (hidden) are used by administrators to gain access to a server remotely • Server names end in $ • Default administrative shares are ADMIN$ C$ and more'</i>"
+            },
+            {
+                question: "The Print Management Tool simplifies the administration of printers, print servers, and print jobs across a domain.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "The Print Management Tool is a Microsoft Management Console (MMC) snap-in that provides a centralized interface for managing all aspects of printing within an organization, including printers, print servers, and print jobs.<br><i>Reference: Week6-PrintingServices.pdf, Page 14: 'Print Management Tool: The Print Management Tool will simplify the administration of Printers, Print Servers and Print Jobs across the domain'</i>"
+            },
+            {
+                question: "OneDrive for Business is primarily used for storing team documents that everyone updates.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "OneDrive for Business is primarily for storing business documents for an individual's own use, though it has sharing capabilities. SharePoint is typically used for team documents where multiple members collaborate and update content.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 45: 'OneDrive or SharePoint?: OneDrive for Business: Store business documents for your own use in OneDrive for Business. SharePoint: Store business documents for a team in a Team site.'</i>"
+            },
+            {
+                question: "Dynamic DNS (DDNS) enables client computers and DHCP servers to automatically register IP addresses with the DNS server.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "Dynamic DNS (DDNS) is a modern form of DNS that allows client computers and DHCP servers to automatically register and update their IP address information with the DNS server, reducing manual configuration.<br><i>Reference: Week8-DHCP-DNS.pdf, Page 31: 'DDNS: DNS Dynamic Update Protocol: • Enables client computers and DHCP servers to automatically register IP addresses'</i>"
+            },
+            // --- Image-based Questions (3 questions) ---
+            {
+                question: "Refer to the diagram and answer the question using the following information:<br>1. The DATA folder has been shared so that EVERYONE has Full Control.<br>2. The Sales Group has Read & Write NTFS permissions on the Sales_Files Folder.<br>3. The Managers Group has Modify NTFS permissions on the Sales_Files Folder.<br>4. Only Bob has been given the Read NTFS permission on Doc1.txt<br>5. The Managers Group has been given Full Control on the Management folder.<br>6. Mary has been denied Write Access on Doc3.txt<br><br><b>Question: What permission does Xu have to Doc1.txt?</b>",
+                image: "Diagram1.jpg",
+                options: ["No Access", "Read & Write", "Modify", "Full Control"],
+                answer: "No Access",
+                explanation: "Xu is a member of the Sales group, which has Read & Write NTFS permissions on the Sales_Files folder. However, only Bob has been given Read access to Doc1.txt specifically, and no other user or group has been granted permissions on that file. Since explicit file permissions override inherited folder permissions and no other access is granted to Xu, he has no access to Doc1.txt.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 14: 'NTFS Permissions Rules: • File Permissions Override Folder Permissions'</i>"
+            },
+            {
+                question: "Refer to the diagram and answer the question using the following information:<br>1. The DATA folder has been shared so that EVERYONE has Full Control.<br>2. The Sales Group has Read & Write NTFS permissions on the Sales_Files Folder.<br>3. The Managers Group has Modify NTFS permissions on the Sales_Files Folder.<br>4. Only Bob has been given Read NTFS permission on Doc1.txt.<br>5. The Managers Group has been given Full Controll on the Management folder.<br>6. Mary has been denied Write access on Doc3.txt<br><br><b>Question: What permission does Mary have to Doc3.txt?</b>",
+                image: "Diagram1.jpg",
+                options: ["Read", "Modify", "Read & Write", "No Access"],
+                answer: "Read",
+                explanation: "Mary has been explicitly denied Write access to Doc3.txt. However, she may still inherit Read permissions from the parent folder or group memberships (e.g., Managers group Modify access on Sales_Files). Since denying Write does not remove Read access unless explicitly blocked, Mary retains Read access.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 14: 'NTFS Permissions Rules: • Deny Overrides Other Permissions' and Page 15: 'NTFS Permissions for Folders and Files: Read: Can view file contents, view folder attributes and permissions, but cannot traverse folders or execute files'</i>"
+            },
+            {
+                question: "Refer to the diagram and answer the question using the following information:<br>1. The DATA folder has been shared so that EVERYONE has Full Control.<br>2. The Engineering Group has been given Modify NTFS permissions to the Manufacturing_Files and Engineering_Files Folder.<br>3. The Manufacturing Group has Read & Write NTFS permissions on the Manufacturing_Files folder.<br>4. Sue has been given Denied Write access to Doc2.txt<br><br><b>Question: What permission does Dave have to Doc3.txt?</b>",
+                image: "Diagram2.jpg",
+                options: ["Modify", "Read", "Full Control", "No Access"],
+                answer: "Modify",
+                explanation: "1. Dave is a member of the Engineering Group, which has Modify NTFS permissions on the Engineering_Files folder.<br>2. Doc3.txt is located within the Engineering_Files folder. Since there are no specific NTFS permissions assigned to Doc3.txt at the file level, the folder-level permissions (Modify) apply by default.<br>3. There is no mention of any deny or additional restrictions on Dave's access to Doc3.txt, so he inherits the Modify permission from the Engineering_Files folder.<br><i>Reference: Week4-ManagingFoldersandFiles.pdf, Page 13: 'Explicit vs Inherited Permissions: • Inherited permissions are permissions that are given to an object because it is a child of a parent object.'</i>"
+            }
+        ];
+
+        let questions; // Declare questions in a scope accessible by checkAnswer
+
+        // Function to shuffle an array (Fisher-Yates algorithm)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+            return array;
+        }
+
+        // Initialize quiz
+        function initializeQuiz() {
+            // Filter questions into their respective types
+            const multipleChoiceQuestions = originalQuestions.filter(q => q.options.length > 2 && !q.image);
+            const trueFalseQuestions = originalQuestions.filter(q => q.options.length === 2 && (q.options.includes("True") || q.options.includes("False")));
+            const imageQuestions = originalQuestions.filter(q => q.image);
+
+            // Shuffle each group independently
+            const shuffledMultipleChoice = shuffleArray(multipleChoiceQuestions);
+            const shuffledTrueFalse = shuffleArray(trueFalseQuestions);
+            const shuffledImageQuestions = shuffleArray(imageQuestions);
+
+            // Combine the shuffled groups. You can adjust the order here if you prefer.
+            // For example, to have all MC, then all T/F, then all Image:
+            questions = [...shuffledMultipleChoice, ...shuffledTrueFalse, ...shuffledImageQuestions]; // Assign to the global 'questions' variable
+
+            // Shuffle options for each question, but skip for True/False questions
+            questions.forEach(q => {
+                const isTrueFalseQuestion = q.options.length === 2 &&
+                                            ((q.options[0] === "True" && q.options[1] === "False") ||
+                                             (q.options[0] === "False" && q.options[1] === "True"));
+
+                if (!isTrueFalseQuestion) {
+                    q.options = shuffleArray(q.options);
+                }
+            });
+
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = ''; // Clear previous questions if any
+
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+
+                if (q.image) {
+                    questionDiv.classList.add('question-with-image');
+
+                    const questionContentDiv = document.createElement('div');
+                    questionContentDiv.classList.add('question-content');
+
+                    questionContentDiv.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
+
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.classList.add('options');
+
+                    q.options.forEach(option => {
+                        const label = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `question${index}`;
+                        radio.value = option;
+                        radio.addEventListener('change', () => checkAnswer(index, option));
+                        label.appendChild(radio);
+                        label.appendChild(document.createTextNode(option));
+                        optionsDiv.appendChild(label);
+                    });
+
+                    questionContentDiv.appendChild(optionsDiv);
+
+                    const feedbackDiv = document.createElement('div');
+                    feedbackDiv.classList.add('feedback');
+                    feedbackDiv.id = `feedback-${index}`;
+                    questionContentDiv.appendChild(feedbackDiv);
+
+                    const explanationDiv = document.createElement('div');
+                    explanationDiv.classList.add('explanation');
+                    explanationDiv.id = `explanation-${index}`;
+                    explanationDiv.style.display = 'none';
+                    questionContentDiv.appendChild(explanationDiv);
+
+                    questionDiv.appendChild(questionContentDiv);
+
+                    const questionMediaDiv = document.createElement('div');
+                    questionMediaDiv.classList.add('question-media');
+                    const img = document.createElement('img');
+                    img.src = q.image;
+                    img.alt = `Diagram for Question ${index + 1}`;
+                    img.classList.add('question-image');
+                    img.onerror = function() {
+                        this.onerror=null;
+                        this.src='https://placehold.co/400x300/cccccc/333333?text=Image+Not+Found';
+                    };
+                    questionMediaDiv.appendChild(img);
+                    questionDiv.appendChild(questionMediaDiv);
+
+                } else {
+                    questionDiv.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
+
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.classList.add('options');
+
+                    q.options.forEach(option => {
+                        const label = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `question${index}`;
+                        radio.value = option;
+                        radio.addEventListener('change', () => checkAnswer(index, option));
+                        label.appendChild(radio);
+                        label.appendChild(document.createTextNode(option));
+                        optionsDiv.appendChild(label);
+                    });
+
+                    questionDiv.appendChild(optionsDiv);
+                    const feedbackDiv = document.createElement('div');
+                    feedbackDiv.classList.add('feedback');
+                    feedbackDiv.id = `feedback-${index}`;
+                    questionDiv.appendChild(feedbackDiv);
+
+                    const explanationDiv = document.createElement('div');
+                    explanationDiv.classList.add('explanation');
+                    explanationDiv.id = `explanation-${index}`;
+                    explanationDiv.style.display = 'none';
+                    questionDiv.appendChild(explanationDiv);
+                }
+
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+
+        function checkAnswer(questionIndex, selectedOption) {
+            const question = questions[questionIndex];
+            const feedbackDiv = document.getElementById(`feedback-${questionIndex}`);
+            const explanationDiv = document.getElementById(`explanation-${questionIndex}`);
+            const radios = document.getElementsByName(`question${questionIndex}`);
+
+            radios.forEach(radio => radio.disabled = true);
+
+            if (selectedOption === question.answer) {
+                feedbackDiv.textContent = "Correct!";
+                feedbackDiv.classList.remove('incorrect');
+                feedbackDiv.classList.add('correct');
+            } else {
+                feedbackDiv.textContent = "Incorrect.";
+                feedbackDiv.classList.remove('correct');
+                feedbackDiv.classList.add('incorrect');
+            }
+
+            explanationDiv.innerHTML = `<strong>Correct Answer:</strong> ${question.answer}<br>${question.explanation}`;
+            explanationDiv.style.display = 'block';
+        }
+
+        // Disclaimer logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const disclaimerPage = document.getElementById('disclaimer-page');
+            const acceptButton = document.getElementById('accept-button');
+            const quizContainer = document.getElementById('quiz-container');
+            const quizTitle = document.getElementById('quiz-title');
+
+            acceptButton.addEventListener('click', () => {
+                disclaimerPage.style.display = 'none';
+                quizTitle.style.display = 'block';
+                quizContainer.style.display = 'block';
+                initializeQuiz(); // Initialize and display the quiz questions
+            });
+        });
+    </script>
+
+</body>
+</html>
